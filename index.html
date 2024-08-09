@@ -1,3 +1,287 @@
 <html>
 
+<head>
+    <style>
+        input[type=number] {
+            width: 60px;
+            height: 60px;
+            font-size: medium;
+            text-align: center;
+            align-items: center;
+        }
+
+        input[type=number]:hover {
+            width: 60px;
+            height: 60px;
+            font-size: medium;
+            background-color: rgb(255, 255, 187);
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+        <tr>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+        </tr>
+    </table>
+
+    <button style="background-color: red;" onclick="solve()">Solve</button>
+    <div id="possibilities-table"></div>
+
+    <script>
+        let possibilities = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => []));
+        let main = [];
+        let bordSize = 9;
+
+        function solve() {
+            getInitialValues()
+            fillPossibilities()
+
+            let isFoundatSingleCandidate = checkSingleCandidateInEachCells()
+            let isFoundUniqueCandidate = checkUniqueCandidateInEachRows()
+            // console.log(isFoundatSingleCandidate, isFoundUniqueCandidate);
+
+            updateState()
+            displayPossibilities()
+
+            console.log(main);
+            // setInterval(function () {
+            //     console.log('hi');
+            // }, 2000);
+        }
+
+        function fillPossibilities() {
+            main.forEach((row, rowIndx) => {
+                row.forEach((cellItem, colIndx) => {
+                    rowArray = row;
+                    colArray = main.map(subArray => subArray[colIndx]);
+                    blockArray = getBlockArray(rowIndx, colIndx);
+
+                    for (let i = 1; i <= bordSize; i++) {
+                        if (!rowArray.includes(i) && !colArray.includes(i) && !blockArray.includes(i) && main[rowIndx][colIndx] == 0) {
+                            possibilities[rowIndx][colIndx].push(i);
+                        }
+                    }
+                })
+            });
+            // console.log(possibilities);
+        }
+
+
+        function getInitialValues() {
+            let table = document.querySelector('table');
+
+            for (let row of table.rows) {
+                let rowArray = [];
+                for (let cell of row.cells) {
+                    let input = cell.querySelector('input[type="number"]');
+                    rowArray.push(Number(input.value));
+                    input.disabled = true;
+                }
+                main.push(rowArray);
+            }
+
+            main = [ // for testing purposes
+                [0, 5, 0, 6, 0, 1, 0, 0, 8],
+                [0, 2, 4, 9, 8, 0, 3, 0, 0],
+                [9, 8, 0, 2, 0, 0, 7, 4, 0],
+                [0, 0, 0, 7, 0, 5, 0, 0, 4],
+                [5, 0, 8, 0, 0, 6, 0, 9, 0],
+                [7, 0, 0, 0, 9, 4, 6, 5, 0],
+                [1, 0, 6, 0, 0, 0, 4, 8, 3],
+                [0, 0, 0, 4, 3, 9, 0, 0, 1],
+                [0, 3, 2, 0, 6, 0, 0, 0, 0]];
+
+            // console.log(main);
+        }
+
+
+        function getBlockArray(rowIndx, colIndx) {
+            var blockArray = []
+            var rowStaringIndx = rowIndx - (rowIndx % 3);
+            var colStaringIndx = colIndx - (colIndx % 3);
+
+            for (let i = rowStaringIndx; i < rowStaringIndx + 3; i++) {
+                for (let j = colStaringIndx; j < colStaringIndx + 3; j++) {
+                    blockArray.push(main[i][j])
+                    // console.log(i, ' : ', j);
+                }
+            }
+            // console.log(blockArray);
+            return blockArray
+        }
+
+
+        function checkSingleCandidateInEachCells() {
+            let isFoundatleastOne = false;
+            possibilities.forEach((row, rowIndx) => {
+                row.forEach((candidates, colIndx) => {
+                    if (candidates && candidates.length == 1) {
+                        main[rowIndx][colIndx] = candidates[0];
+                        possibilities[rowIndx][colIndx] = [];
+                        isFoundatleastOne = true;
+                    }
+                })
+            })
+            return isFoundatleastOne;
+        }
+
+        function checkUniqueCandidateInEachRows() {
+            let isFoundatleastOne = false;
+            possibilities.forEach((row, rowIndx) => {
+                let fullCandidatesInRow = []
+                row.map(candidates => {
+                    fullCandidatesInRow.push(...candidates)
+                })
+
+                row.forEach((candidates, colIndx) => {
+                    candidates.forEach(candidate => {
+                        if (fullCandidatesInRow.filter(c => c == candidate).length == 1) {
+                            main[rowIndx][colIndx] = candidate;
+                            possibilities[rowIndx][colIndx] = [];
+                            isFoundatleastOne = true;
+                        }
+                    })
+                })
+            })
+            return isFoundatleastOne;
+        }
+
+
+
+        function updateState() {
+            let table = document.querySelector('table');
+
+            for (let row of table.rows) {
+                for (let cell of row.cells) {
+                    let input = cell.querySelector('input[type="number"]');
+                    if (main[row.rowIndex][cell.cellIndex] == 0) {
+
+                        input.value = possibilities[row.rowIndex][cell.cellIndex].join('');
+                        input.style.color = "red";
+                    } else {
+                        input.value = main[row.rowIndex][cell.cellIndex];
+                        input.style.color = "green";
+                    }
+                }
+            }
+        }
+
+        function displayPossibilities() {
+            let table = document.createElement('table');
+            table.border = 1;
+
+            possibilities.forEach((row, rowIndex) => {
+                let tr = document.createElement('tr');
+                row.forEach((cell, cellIndex) => {
+                    let td = document.createElement('td');
+                    td.textContent = `${cell.length > 0 ? cell : 'Empty'} `;
+                    // td.textContent = `[${ rowIndex },${ cellIndex }] ${ cell.length > 0 ? cell : 'Empty' }`;
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            });
+
+            document.getElementById('possibilities-table').appendChild(table);
+        }
+    </script>
+</body>
+
 </html>
